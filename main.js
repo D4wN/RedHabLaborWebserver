@@ -3,7 +3,10 @@ var app = express();
 var io = require('socket.io')()
 var path = require('path');
 
+var ip = require('ip');
+var HOST= ip.address()
 var PORT = 3000;
+
 var filename = 'C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log';
 var logfilePath = '/home/tf/programs/TODO....'
 var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules'
@@ -47,6 +50,8 @@ app.delete('/rules', function (req, res) {
 //Socket.io
 io.on('connection', function(socket){
     console.log('a user connected');
+    // Give Client Rest Api Adress
+    socket.emit('ip', HOST+":"+PORT);
     //Disconnected
     socket.on('disconnect', function(){
         console.log('user disconnected');
@@ -58,9 +63,9 @@ io.on('connection', function(socket){
 });
 
 var server = app.listen(PORT, function () {
-    var host = server.address().address;
+    //var host = server.address().address;
     var port = server.address().port;
 
-    console.log('RedHabLab listening at http://%s:%s', host, port);
+    console.log('RedHabLab listening at http://%s:%s', HOST, port);
 });
 io.listen(server)
