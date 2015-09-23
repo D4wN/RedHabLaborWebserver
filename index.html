@@ -3,27 +3,53 @@
 <head>
     <title>RedHab Logfile</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         /*body { font: 13px Helvetica, Arial; }
         div { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }*/
         /* input { border: 0; padding: 10px; width: 90%; margin-right: .5%; } */
-        button { width: 20%; background: rgb(130, 224, 255); border: none; padding: 10px; alignment: right}
-        #messages { list-style-type: none; margin: 0; padding: 0; }
-        #messages li { padding: 5px 10px; }
-        #messages li:nth-child(odd) { background: #eee; }
+        button {
+            width: 20%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+            alignment: right
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
     </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="func.js"></script>
 </head>
 <body>
-<h2>RedHab Labor Demo - Logfile View</h2>
-<div>
-    <button id="btn" >Get Complete Log</button>
-    <input type="checkbox" id="autoscroll">Auto Scroll?
-    <button id="del_log">Delete Logfile</button>
-    <button id="del_rules">Reset Rules</button>
+<div style="text-align: left;margin-left: 20px"><h2>RedHab Labor Demo - Logfile View</h2>
+    <button class="btn btn-sm btn-primary" id="btn">Get Complete Log</button>
+    <!-- <input class="checkbox" type="checkbox" id="autoscroll"/>Auto Scroll -->
+    <button class="btn btn-sm btn-danger" id="del_log">Delete Logfile</button>
+    <button class="btn btn-sm btn-danger" id="del_rules">Reset Rules</button>
+    <div class="checkbox">
+        <label><input type="checkbox" id="autoscroll" value="">Auto Scroll</label>
+    </div>
 </div>
+
 <ul id="messages"></ul>
 </body>
 </html>
