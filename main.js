@@ -9,7 +9,7 @@ var PORT = 3000;
 
 //TODO DEBUG ONLY!
 //var logfilePath = 'C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log';
-var logfilePath = "./test.log"
+var logfilePath = "./testlog.log"
 //var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules'
 var rulesfilePath = "./testrules.rules"
 var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end";
