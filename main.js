@@ -37,9 +37,10 @@ var initTail = function(){
     tail = new Tail(logfilePath, '\n', options);
     tail.on('line', watchFuncTail);
     tail.on('error', errorFuncTail);
-    tail.watch();
+    //tail.watch();
 }
 initTail();
+tail.watch();
 
 //Routes
 app.get('/', function(req, res){
@@ -47,7 +48,7 @@ app.get('/', function(req, res){
 });
 
 app.delete('/log', function (req, res) {
-    tail.unwatch();
+    //tail.unwatch();
     fs.writeFile(logfilePath, '', function(err){
         if (err) {
             initTail();
@@ -56,7 +57,7 @@ app.delete('/log', function (req, res) {
         }
         // Cleanup log cache
         logData.splice(0,logData.length);
-        initTail();
+        //initTail();
         res.send('Successfully deleted the Logfile!');
     })
 });
