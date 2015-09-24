@@ -27,7 +27,6 @@ $(document).ready(function () {
         console.log(data);
         clearList();
         console.log("Complete Log")
-        console.log(data)
         for (var i = 0; i < data.length; i++) {
             $('#messages').append($('<li>').text(data[i]));
         }
@@ -81,10 +80,12 @@ $(document).ready(function () {
             type: 'DELETE',
             success: function (result) {
                 console.log("Delete Log success: " + result);
+                alert(result);
                 clearList();
             },
             error: function (err) {
-                alert("Error in deleteLog! -> " + err);
+                console.log("Error in deleteLog! -> " + err);
+                alert(err);
             }
         });
     }
@@ -94,10 +95,12 @@ $(document).ready(function () {
             url: '/rules',
             type: 'DELETE',
             success: function (result) {
-                console.log("Reset Rules success: " + result)
+                console.log("Reset Rules success: " + result);
+                alert(result);
             },
             error: function (err) {
-                alert("Error in resetRules! -> " + err)
+                console.log("Error in resetRules! -> " + err);
+                alert(err);
             }
         });
     }

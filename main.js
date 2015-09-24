@@ -13,7 +13,7 @@ var PORT = 3000;
 var logfilePath = "./testlog.log"
 //var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules'
 var rulesfilePath = "./testrules.rules"
-var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end";
+var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end\n";
 
 //Static Files
 app.use(express.static('public'));
@@ -23,16 +23,23 @@ var logData = [];
 var Tail = require('always-tail');
 var options = {'interval': 1000}
 
-var tail = new Tail(logfilePath, '\n', options);
-tail.on('line', function(data) {
-    logData.push(data)
-    io.emit('log', data)
-    //console.log(data);
-});
-tail.on('error', function(data) {
-    console.log("error:", data);
-});
-tail.watch();
+
+var tail;
+var watchFuncTail = function(data){
+    console.log("watched: " + data);
+    logData.push(data);
+    io.emit('log', data);
+}
+var errorFuncTail = function(data) {
+    console.log("tail-error:", data);
+}
+var initTail = function(){
+    tail = new Tail(logfilePath, '\n', options);
+    tail.on('line', watchFuncTail);
+    tail.on('error', errorFuncTail);
+    tail.watch();
+}
+initTail();
 
 //Routes
 app.get('/', function(req, res){
@@ -41,29 +48,26 @@ app.get('/', function(req, res){
 
 app.delete('/log', function (req, res) {
     tail.unwatch();
-    // FIXME: Add real path to log-file
     fs.writeFile(logfilePath, '', function(err){
         if (err) {
-            return console.log("Can't delete log file" + err);
+            initTail();
+            res.send('Could not delete the Logfile! ' + err);
+            return;
         }
         // Cleanup log cache
         logData.splice(0,logData.length);
-
-        console.log('Got a DELETE request at /log');
-        tail.watch();
-        res.send('Got a DELETE request at /log');
+        initTail();
+        res.send('Successfully deleted the Logfile!');
     })
 });
 
 app.delete('/rules', function (req, res) {
-    // FIXME: Add real path to rule file
     fs.writeFile(rulesfilePath, baseRules,  function(err){
         if (err) {
-            return console.log("Can't reset rule file" + err);
+            res.send('Could not reset the Rules! ' + err);
+            return;
         }
-
-        console.log('Got a DELETE request at /rules')
-        res.send('Got a DELETE request at /rules');
+        res.send('Successfully resetted the Rules!');
     });
 });
 
