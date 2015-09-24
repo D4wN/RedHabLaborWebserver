@@ -69,7 +69,7 @@ $(document).ready(function () {
     //Reset Rules
     $('#del_rules').click(function(){
         if(confirmDialog('Are you suret to reset the Rules?')){
-            console.log("SURE RULES");
+            resetRules()
         }
     });
 
