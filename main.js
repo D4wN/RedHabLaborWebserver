@@ -2,6 +2,7 @@ var express = require('express')
 var app = express();
 var io = require('socket.io')()
 var path = require('path');
+var fs = require('fs')
 
 var ip = require('ip');
 var HOST= ip.address()
@@ -39,22 +40,31 @@ app.get('/', function(req, res){
 });
 
 app.delete('/log', function (req, res) {
-    //TODO DELETE logfilePath
-    //unwatch damit die änderungen nicht gleich gepsuhed werden, nach erfolgreichen löschen wieder watchen!
     tail.unwatch();
-    tail.watch();
+    // FIXME: Add real path to log-file
+    fs.writeFile(logfilePath, '', function(err){
+        if (err) {
+            return console.log("Can't delete log file" + err);
+        }
+        // Cleanup log cache
+        logData.splice(0,logData.length);
 
-
-    console.log('Got a DELETE request at /log')
-    res.send('Got a DELETE request at /log');
+        console.log('Got a DELETE request at /log');
+        tail.watch();
+        res.send('Got a DELETE request at /log');
+    })
 });
 
 app.delete('/rules', function (req, res) {
-    //TODO RESET rulesfilePath
-    //überscheibe rulesfilePath mit baseRules
+    // FIXME: Add real path to rule file
+    fs.writeFile(rulesfilePath, baseRules,  function(err){
+        if (err) {
+            return console.log("Can't reset rule file" + err);
+        }
 
-    console.log('Got a DELETE request at /rules')
-    res.send('Got a DELETE request at /rules');
+        console.log('Got a DELETE request at /rules')
+        res.send('Got a DELETE request at /rules');
+    });
 });
 
 //Socket.io
