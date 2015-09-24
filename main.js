@@ -7,9 +7,11 @@ var ip = require('ip');
 var HOST= ip.address()
 var PORT = 3000;
 
-var filename = 'C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log';
-var logfilePath = '/home/tf/programs/TODO....'
-var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules'
+//TODO DEBUG ONLY!
+//var logfilePath = 'C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log';
+var logfilePath = "./test.log"
+//var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules'
+var rulesfilePath = "./testrules.rules"
 var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end";
 
 //Static Files
@@ -20,7 +22,7 @@ var logData = [];
 var Tail = require('always-tail');
 var options = {'interval': 1000}
 
-var tail = new Tail(filename, '\n', options);
+var tail = new Tail(logfilePath, '\n', options);
 tail.on('line', function(data) {
     logData.push(data)
     io.emit('log', data)
@@ -31,18 +33,26 @@ tail.on('error', function(data) {
 });
 tail.watch();
 
-
 //Routes
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.delete('/log', function (req, res) {
+    //TODO DELETE logfilePath
+    //unwatch damit die änderungen nicht gleich gepsuhed werden, nach erfolgreichen löschen wieder watchen!
+    tail.unwatch();
+    tail.watch();
+
+
     console.log('Got a DELETE request at /log')
     res.send('Got a DELETE request at /log');
 });
 
 app.delete('/rules', function (req, res) {
+    //TODO RESET rulesfilePath
+    //überscheibe rulesfilePath mit baseRules
+
     console.log('Got a DELETE request at /rules')
     res.send('Got a DELETE request at /rules');
 });
