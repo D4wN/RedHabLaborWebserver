@@ -8,11 +8,10 @@ var ip = require('ip');
 var HOST= ip.address()
 var PORT = 3000;
 
-//TODO DEBUG ONLY!
-//var logfilePath = 'C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log';
-var logfilePath = "./testlog.log"
-//var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules'
-var rulesfilePath = "./testrules.rules"
+var logfilePath = '/home/tf/programs/RedHab_-_Labor/bin/eventlogger.log';
+//var logfilePath = "C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log"
+var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules';
+//var rulesfilePath = "./testrules.rules"
 var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end\n";
 
 //Static Files
@@ -37,10 +36,10 @@ var initTail = function(){
     tail = new Tail(logfilePath, '\n', options);
     tail.on('line', watchFuncTail);
     tail.on('error', errorFuncTail);
-    //tail.watch();
+    tail.watch();
 }
 initTail();
-tail.watch();
+//tail.watch();
 
 //Routes
 app.get('/', function(req, res){
@@ -48,7 +47,7 @@ app.get('/', function(req, res){
 });
 
 app.delete('/log', function (req, res) {
-    //tail.unwatch();
+    tail.unwatch();
     fs.writeFile(logfilePath, '', function(err){
         if (err) {
             initTail();
@@ -57,7 +56,9 @@ app.delete('/log', function (req, res) {
         }
         // Cleanup log cache
         logData.splice(0,logData.length);
-        //initTail();
+        initTail();
+        console.log("DELETED----------------------------------------------------------------------")
+        console.log(logData)
         res.send('Successfully deleted the Logfile!');
     })
 });
