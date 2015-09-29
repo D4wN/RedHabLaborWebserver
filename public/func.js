@@ -72,6 +72,10 @@ $(document).ready(function () {
         }
     });
 
+    $('#change_path').click(function(){
+        changeLogPath()
+    });
+
 
     // JQuery - Ajax Requests ##########################################################################################
     var deleteLog = function () {
@@ -103,7 +107,21 @@ $(document).ready(function () {
                 alert(err);
             }
         });
-    }
+    };
 
-
+    var changeLogPath = function(){
+        $.ajax({
+            url: '/logChange',
+            type: 'POST',
+            data: { logpath: $('#txt_path').val()},
+            success: function (result) {
+                console.log("New path was set : " + result);
+                alert(result);
+            },
+            error: function (err) {
+                console.log("Can't set new path! -> " + err);
+                alert(err);
+            }
+        });
+    };
 });

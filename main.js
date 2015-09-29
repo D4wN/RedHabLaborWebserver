@@ -8,8 +8,8 @@ var ip = require('ip');
 var HOST= ip.address()
 var PORT = 3000;
 
-var logfilePath = '/home/tf/programs/RedHab_-_Labor/bin/eventlogger.log';
-//var logfilePath = "C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log"
+// var logfilePath = '/home/tf/programs/RedHab_-_Labor/bin/eventlogger.log';
+// var logfilePath = "C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log"
 var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules';
 //var rulesfilePath = "./testrules.rules"
 var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end\n";
@@ -38,12 +38,32 @@ var initTail = function(){
     tail.on('error', errorFuncTail);
     tail.watch();
 }
+
+var resetLog = function(path){
+    console.log('Path:' + path)
+
+    stats = fs.lstatSync(path);
+
+    if(stats != null && stats.isFile){
+        tail.unwatch()
+        logfilePath = path
+    }
+
+    initTail()
+};
+
 initTail();
 //tail.watch();
 
 //Routes
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.post('/logChange', function (req, res) {
+    console.log(req.body);
+
+    //resetLog(req.body.logpath);
 });
 
 app.delete('/log', function (req, res) {
