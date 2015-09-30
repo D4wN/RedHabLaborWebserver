@@ -75,14 +75,14 @@ $(document).ready(function () {
 
     //Delete Log
     $('#del_log').click(function(){
-        if(confirmDialog('Are you suret to delete the Logfile?')){
+        if(confirmDialog('Are you sure to delete the Logfile?')){
             deleteLog()
         }
     });
 
     //Reset Rules
     $('#del_rules').click(function(){
-        if(confirmDialog('Are you suret to reset the Rules?')){
+        if(confirmDialog('Are you sure to reset the Rules?')){
             resetRules()
         }
     });
