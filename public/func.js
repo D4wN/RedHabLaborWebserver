@@ -41,8 +41,23 @@ $(document).ready(function () {
     });
 
     //Ip of Host
-    socket.on('ip', function (data) {
+    socket.on('ip', function (data, logfilePath) {
+        //console.log("GOT: " + data + ", " + logfilePath)
         webserverURL = data;
+        $('#txt_path').val(logfilePath);
+    });
+
+    socket.on('changeLogfilePath', function(changed, data){
+       console.log("changeLogfilePath: " + changed + ", " + data);
+        if(changed){
+            clearList();
+            $('#txt_path').val(data);
+            alert("Logfile Path was changed!");
+            //socket.emit('completeLog');
+        } else {
+            alert("Logfile not found!");
+        }
+
     });
 
     // JQuery - Events #################################################################################################
@@ -72,8 +87,10 @@ $(document).ready(function () {
         }
     });
 
+    // Change Logfile Path
     $('#change_path').click(function(){
-        changeLogPath()
+        data = $('#txt_path').val();
+        socket.emit('changeLogfilePath', data);
     });
 
 
@@ -104,22 +121,6 @@ $(document).ready(function () {
             },
             error: function (err) {
                 console.log("Error in resetRules! -> " + err);
-                alert(err);
-            }
-        });
-    };
-
-    var changeLogPath = function(){
-        $.ajax({
-            url: '/logChange',
-            type: 'POST',
-            data: { logpath: $('#txt_path').val()},
-            success: function (result) {
-                console.log("New path was set : " + result);
-                alert(result);
-            },
-            error: function (err) {
-                console.log("Can't set new path! -> " + err);
                 alert(err);
             }
         });

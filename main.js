@@ -9,7 +9,7 @@ var HOST= ip.address()
 var PORT = 3000;
 
 // var logfilePath = '/home/tf/programs/RedHab_-_Labor/bin/eventlogger.log';
-// var logfilePath = "C:/Programmierung/Repos/Python/TinkerforgeRedHab/eventlogger.log"
+var logfilePath = "./testlog.log"
 var rulesfilePath = '/etc/openhab/configurations/rules/labor.rules';
 //var rulesfilePath = "./testrules.rules"
 var baseRules = "rule \"System Started\" when System started then logDebug(\"Labor\", \"System started! Init Segment7 with 9999\") sendCommand(Segment7, \"9998\") end\n";
@@ -39,17 +39,28 @@ var initTail = function(){
     tail.watch();
 }
 
-var resetLog = function(path){
-    console.log('Path:' + path)
-
-    stats = fs.lstatSync(path);
-
-    if(stats != null && stats.isFile){
-        tail.unwatch()
-        logfilePath = path
+var changeLog = function(path){
+    console.log('Path:' + path);
+    if(path === undefined || path == null){
+        return false;
     }
-
-    initTail()
+    if(path == logfilePath) {
+        return false;
+    }
+    try{
+        stats = fs.lstatSync(path);
+        if(stats != null && stats.isFile){
+            console.log("plo")
+            tail.unwatch();
+            logData.splice(0,logData.length);
+            logfilePath = path;
+            initTail();
+            return true;
+        }
+    }catch (e) {
+        //DO nothing, File does not exists
+    }
+    return false;
 };
 
 initTail();
@@ -58,12 +69,6 @@ initTail();
 //Routes
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.post('/logChange', function (req, res) {
-    console.log(req.body);
-
-    //resetLog(req.body.logpath);
 });
 
 app.delete('/log', function (req, res) {
@@ -97,14 +102,22 @@ app.delete('/rules', function (req, res) {
 io.on('connection', function(socket){
     console.log('a user connected');
     // Give Client Rest Api Adress
-    socket.emit('ip', HOST+":"+PORT);
+    socket.emit('ip', HOST+":"+PORT, logfilePath);
     //Disconnected
     socket.on('disconnect', function(){
         console.log('user disconnected');
     });
     // Message
     socket.on('getCompleteLog', function(){
-        io.emit('completeLog', logData);
+        socket.emit('completeLog', logData);
+    });
+    // change Logfile Path
+    socket.on('changeLogfilePath', function(data){
+        console.log("on:changeLogfilePath: " + data);
+        changed = changeLog(data);
+        console.log("changelog: " + changeLog(data));
+        console.log("path: " + logfilePath);
+        io.emit('changeLogfilePath', changed, logfilePath);
     });
 });
 
